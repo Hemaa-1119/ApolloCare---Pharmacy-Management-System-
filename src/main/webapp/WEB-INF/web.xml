@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    web.xml — Deployment Descriptor for ApolloCare
+    Tomcat 10.1 / Jakarta EE 10 / Servlet 6.0
+
+    All Servlet and Filter mappings are declared here (pure XML approach).
+    No @WebServlet or @WebFilter annotations are used in the Java files
+    so that the entire URL → Class mapping is visible in one place.
+-->
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                             https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <display-name>ApolloCare - Online Pharmacy Management</display-name>
+
+    <!-- ============================================================
+         APPLICATION LIFECYCLE LISTENER
+         Seeds admin user and creates image upload directory on startup.
+         Demonstrates: ServletContextListener
+         ============================================================ -->
+    <listener>
+        <listener-class>com.apollocare.util.DataInitializer</listener-class>
+    </listener>
+
+    <!-- ============================================================
+         SESSION CONFIGURATION
+         ============================================================ -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <!-- ============================================================
+         WELCOME FILES
+         ============================================================ -->
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <!-- ============================================================
+         FILTERS
+         Order matters: AuthenticationFilter runs before AdminFilter
+         for /admin/* URLs (both are mapped to it).
+         ============================================================ -->
+
+    <!-- Filter 1: Authentication — "Is the user logged in?" -->
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>com.apollocare.filter.AuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/cart</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/checkout</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/order/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Filter 2: Admin Authorization — "Does the logged-in user have ADMIN role?" -->
+    <filter>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>com.apollocare.filter.AdminFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AdminFilter</filter-name>
+        <url-pattern>/admin/*</url-pattern>
+    </filter-mapping>
+
+    <!-- ============================================================
+         CUSTOMER SERVLETS
+         ============================================================ -->
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.customer.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.customer.LoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.customer.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MedicineListServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.customer.MedicineListServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MedicineListServlet</servlet-name>
+        <url-pattern>/medicines</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>MedicineDetailServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.customer.MedicineDetailServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>MedicineDetailServlet</servlet-name>
+        <url-pattern>/medicine/detail</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CartServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.customer.CartServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CartServlet</servlet-name>
+        <url-pattern>/cart</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.customer.CheckoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CheckoutServlet</servlet-name>
+        <url-pattern>/checkout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PlaceOrderServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.customer.PlaceOrderServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PlaceOrderServlet</servlet-name>
+        <url-pattern>/order/place</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.customer.OrderHistoryServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrderHistoryServlet</servlet-name>
+        <url-pattern>/order/history</url-pattern>
+    </servlet-mapping>
+
+    <!-- ============================================================
+         ADMIN SERVLETS
+         ============================================================ -->
+
+    <servlet>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.admin.AdminDashboardServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminDashboardServlet</servlet-name>
+        <url-pattern>/admin/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminMedicineServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.admin.AdminMedicineServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminMedicineServlet</servlet-name>
+        <url-pattern>/admin/medicines</url-pattern>
+    </servlet-mapping>
+
+    <!--
+        AddMedicineServlet handles file upload via jakarta.servlet.http.Part.
+        multipart-config is required for request.getPart() to work.
+    -->
+    <servlet>
+        <servlet-name>AddMedicineServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.admin.AddMedicineServlet</servlet-class>
+        <multipart-config>
+            <max-file-size>5242880</max-file-size>       <!-- 5 MB per file -->
+            <max-request-size>10485760</max-request-size> <!-- 10 MB total -->
+            <file-size-threshold>1048576</file-size-threshold> <!-- 1 MB in-memory threshold -->
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddMedicineServlet</servlet-name>
+        <url-pattern>/admin/medicine/add</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>EditMedicineServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.admin.EditMedicineServlet</servlet-class>
+        <multipart-config>
+            <max-file-size>5242880</max-file-size>
+            <max-request-size>10485760</max-request-size>
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>EditMedicineServlet</servlet-name>
+        <url-pattern>/admin/medicine/edit</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DeleteMedicineServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.admin.DeleteMedicineServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DeleteMedicineServlet</servlet-name>
+        <url-pattern>/admin/medicine/delete</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminOrderServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.admin.AdminOrderServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminOrderServlet</servlet-name>
+        <url-pattern>/admin/orders</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UpdateOrderStatusServlet</servlet-name>
+        <servlet-class>com.apollocare.servlet.admin.UpdateOrderStatusServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UpdateOrderStatusServlet</servlet-name>
+        <url-pattern>/admin/order/status</url-pattern>
+    </servlet-mapping>
+
+    <!-- ============================================================
+         ERROR PAGES
+         ============================================================ -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/views/common/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/views/common/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/views/common/error.jsp</location>
+    </error-page>
+
+</web-app>
