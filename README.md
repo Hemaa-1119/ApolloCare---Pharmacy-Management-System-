@@ -1,4 +1,4 @@
-# Apollo Pharmacy – Online Pharmacy Management System
+# ApolloCare – Online Pharmacy Management System
 
 ## Overview
 
